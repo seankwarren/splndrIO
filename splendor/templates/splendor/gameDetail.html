@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Game Tempalte</title>
+        <link rel="stylesheet" href="">
+    </head>
+    <body>
+        <h1>Game Detail</h1>
+        <div id="game-id">
+            <!-- <div>{'id': '{{ game.id }}'</div>
+            <div>'game_name': '{{ game.game_name }}'</div>
+            <div>'num_players': {{ game.num_players }}</div>
+            <br>
+            <div>'bank': {{ game.bank }}</div>
+            <br>
+            <div>'decks': {{ game.decks }}</div>
+            <br>
+            <div>'players': {{ game.players }}</div> -->
+        </div>
+        <input type="text" id="gems-draw-input" pattern="[0-9]+,[0-9]+,[0-9]+,[0-9]+,[0-9]+,[0-9]" placeHolder="0,0,0,0,0,0">
+        <input type="submit" id="gem-draw-submit" value="Draw gems">
+    </body>
+
+    <script>
+        const gameSocket = new WebSocket(
+            'ws://'
+            + window.location.host
+            + 'ws/game'
+            + game_id
+            + '/'
+        ) 
+
+        document.querySelector('#gem-draw-submit').onclick( (e) => {
+            const gemsToDrawInputDom = document.querySelector('#gem-draw-input');
+            const gemsToDraw = gemsToDrawInputDom.value;
+
+            chatSocket.send(JSON.stringify({
+                'player': player,
+                'gems_to_draw': gemsToDraw,
+            }))
+        })
+    </script>
+</html>
