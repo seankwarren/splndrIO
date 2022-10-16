@@ -26,6 +26,16 @@ class Player(models.Model):
                              blank=True,
                              related_name='players'
                              )
+    game_turn = models.ForeignKey(Game,
+                                  on_delete=models.CASCADE,
+                                  null=True,
+                                  blank=True,
+                                  related_name='current_player'
+                                  )
+
+    turn = models.IntegerField(null=True,
+                               blank=True,
+                               )
 
     def __str__(self):
         if self.user:

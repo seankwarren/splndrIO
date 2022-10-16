@@ -1,93 +1,36 @@
-import React, { useState, useRef } from 'react'
-import { BoardType } from './types'
+import React, { useState } from 'react'
+import { BoardType, DeckType, MoveType } from './types'
 import Card from './Card'
 import Noble from './Noble'
-import { click } from '@testing-library/user-event/dist/click'
+import Deck from './Deck'
+import { GameType } from './types'
 
 interface propsType {
     key?: number,
-    board?: BoardType
+    game?: GameType,
+    sendMessage: Function,
 }
 
-const styles = {
-    board: {
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        gridRow: "1 / 2",
-    },
-
-    boardCard: {
-        display: "flex",
-        backgroundColor: "#444",
-        color: "#fff",
-        borderRadius: 5,
-        padding: 0,
-        fontSize: "70%",
-        width: 80,
-        height: 100,
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    boardContainer: {
-        display: "grid",
-        gridTemplateColumns: "repeat(4, 80px)",
-        gridGap: 5,
-        backgroundColor: "#fff",
-        color: "#444",
-        marginRight: 0,
-    },
-    levelOne: {
-        gridRow: "4 / 5",
-    },
-    levelTwo: {
-        gridRow: "3 / 4",
-    },
-    levelThree: {
-        gridRow: "2 / 3",
-    },
-    boardNoble: {
-        display: "flex",
-        gridRow: "1 / 2",
-        backgroundColor: "#e6c73e",
-        color: "#fff",
-        borderRadius: 5,
-        padding: 0,
-        fontSize: "70%",
-        width: 80,
-        height: 100,
-        justifyContent: "center",
-        alignItems: "center",
-    }
-}
-
-const Board: React.FC<propsType> = ({ board }) => {
-
-    const [clickedCard, setClickedCard] = useState<string | undefined>()
-
-    const handleClick: React.MouseEventHandler<HTMLDivElement> = (e) => {
-        console.log("clicked", e.currentTarget.id)
-        setClickedCard(e.currentTarget.id)
-    }
+const Board: React.FC<propsType> = ({ key, game, sendMessage }) => {
 
     return (
-        <div className="board" style={styles.board}>
-            <div className="board-container" style={styles.boardContainer}>
-                {board?.cards.map((card, i) => {
+        <div className="board" >
+            <div className="board-container" >
+                <span className='grid-filler'></span>
+                {game?.decks?.map((deck, i) => {
+                    return <Deck key={i} deck={deck} />
+                })}
+                {game?.board[0]?.cards.map((card, i) => {
                     let level = ""
-                    let style = {}
                     switch (card.level) {
                         case 1:
                             level = "level-one"
-                            style = { ...styles.levelOne, ...styles.boardCard }
                             break;
                         case 2:
                             level = "level-two"
-                            style = { ...styles.levelTwo, ...styles.boardCard }
                             break;
                         case 3:
                             level = "level-three"
-                            style = { ...styles.levelThree, ...styles.boardCard }
                             break;
                         default:
                             level = ""
@@ -95,15 +38,13 @@ const Board: React.FC<propsType> = ({ board }) => {
                     return (
                         <Card
                             className={`board-card ${level}`}
-                            style={style}
-                            key={i}
                             card={card}
-                            handleClick={handleClick} />
+                            sendMessage={sendMessage} />
                     )
                 })}
 
-                {board?.nobles.map((noble, i) => {
-                    return <Noble className="board-noble" style={styles.boardNoble} key={i} noble={noble}></Noble>
+                {game?.board[0]?.nobles.map((noble, i) => {
+                    return <Noble className="board-noble" key={i} noble={noble}></Noble>
                 })}
             </div>
         </div>

@@ -51,7 +51,7 @@ class PlayerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Player
-        fields = ('id', 'name', 'bank', 'deck', 'nobles')
+        fields = ('id', 'name', 'turn', 'bank', 'deck', 'nobles')
 
 
 class BoardSerializer(serializers.ModelSerializer):
@@ -68,13 +68,14 @@ class GameSerializer(serializers.ModelSerializer):
     board = BoardSerializer(many=True, read_only=True)
     bank = BankSerializer(many=True, read_only=True)
     decks = DeckSerializer(many=True, read_only=True)
+    current_player = PlayerSerializer(many=True, read_only=True)
     # game_name = serializers.SerializerMethodField('game_name')
     # completed_at = serializers.SerializerMethodField('get_completed_at')
 
     class Meta:
         model = Game
         fields = ['game_url', 'game_name', 'created_at', 'completed_at',
-                  'num_players', 'players', 'bank', 'board', 'decks']
+                  'num_players', 'current_player', 'players', 'bank', 'board', 'decks']
 
     # def get_game_name(self, obj):
     #     return getattr(obj, 'game_name', None)

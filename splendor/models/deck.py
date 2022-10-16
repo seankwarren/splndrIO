@@ -20,7 +20,7 @@ class Deck(models.Model):
                                 null=True
                                 )
     cards = models.ManyToManyField(Card,
-                                   blank=True
+                                   blank=True,
                                    )
 
     game = models.ForeignKey(Game,

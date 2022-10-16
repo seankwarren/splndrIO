@@ -2,6 +2,9 @@
     "[typescriptreact]": {
         "editor.formatOnSave": true
     },
+    "[typescript]": {
+        "editor.formatOnSave": true
+    },
     "[css]": {
         "editor.formatOnSave": true
     },
@@ -10,10 +13,11 @@
     },
     "python.linting.enabled": true,
     "python.linting.pylintEnabled": true,
-    "python.linting.pylintUseMinimalCheckers": false,
     "python.linting.pylintArgs": [
         "--load-plugins",
         "pylint_django",
         "--django-settings-module=example.settings",
-    ]
+    ],
+    "editor.fontFamily": "Fira Code",
+    "editor.fontLigatures": true,
 }

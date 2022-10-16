@@ -1,40 +1,22 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 
 import { GameType, PlayerType } from './types';
 import useCustomWebSocket from '../hooks/useCustomWebsocket';
 import Player from './Player';
 import { ConnectionStatus } from '../utils';
 import Board from './Board';
-import Deck from './Deck';
 import Bank from './Bank';
-import styles from '../styles';
+import { CardModal } from './CardModal';
 
 interface propsType {
-    game?: GameType
-}
-
-const localStyles = {
-    decksContainer: {
-        display: "grid",
-        gridTemplateColumns: "1fr",
-        gridGap: 5,
-        backgroundColor: "#fff",
-        color: "#444",
-        marginRight: 0,
-        gridRow: "1 / 2",
-    },
-
-    playSurface: {
-        display: "grid",
-        gridTemplateColumns: "1fr 3fr",
-    }
 }
 
 const Game: React.FC<propsType> = (props) => {
 
     // router param
-    const { game_url } = useParams();
+    const { game_url, player_id } = useParams();
+    // console.log(state)
 
     // websocket connection and handling
     const { sendMessage, readyState, response } = useCustomWebSocket(`ws://127.0.0.1:8000/games/${game_url}`);
@@ -70,19 +52,38 @@ const Game: React.FC<propsType> = (props) => {
 
     return (
         <>
-            <h1 className="title" style={styles.title}>spldr.io</h1>
-            <Bank bank={gameData?.bank[0]}></Bank>
-            <br />
-            <div className="play-surface" style={localStyles.playSurface}>
-                <div style={localStyles.decksContainer}>{gameData?.decks.map((deck, i) => {
-                    return <Deck key={i} deck={deck} />
-                })}</div>
-                <br />
-                <Board board={gameData?.board[0]}></Board>
+            <div className="header">
+                <h1 className="title">splndr.io</h1>
             </div>
-            <div>{gameData?.players.map((player: PlayerType, i) => {
-                return <Player key={i} player={player} />
-            })}</div>
+            <div className="container">
+                <div>
+                    <div className="table-container">
+                        {
+                            // !showCardClicked ?
+                            <div>
+                                <Board game={gameData} sendMessage={sendMessage} />
+
+                                {/* <CardModal container={document.getElementById(".table-container") as HTMLElement} /> */}
+                            </div>
+                            // <div>
+                            //     <button onClick={() => setShowCardClicked(false)}>Buy</button>
+                            //     <button onClick={() => setShowCardClicked(false)}>Reserve</button>
+                            // </div>
+                        }
+                    </div>
+
+                    <Bank bank={gameData?.bank[0]}></Bank>
+
+                    <div>CurrentPlayer:
+                        <Player player={gameData?.current_player[0] as PlayerType} />
+                    </div>
+
+                    {/* <div>{gameData?.players?.map((player: PlayerType, i) => {
+                        return <Player key={i} player={player} />
+                    })}</div> */}
+
+                </div>
+            </div>
         </>
     )
 }

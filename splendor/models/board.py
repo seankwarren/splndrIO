@@ -19,6 +19,7 @@ class Board(models.Model):
     cards = models.ManyToManyField(Card,
                                    blank=True
                                    )
+
     nobles = models.ManyToManyField(Noble,
                                     blank=True
                                     )
@@ -34,6 +35,9 @@ class Board(models.Model):
         nobles = Noble.objects.all()  # pylint:disable=E1101
         noble = nobles.order_by('?').first()  # draw a card
         self.nobles.add(noble)  # pylint:disable=E1101
+        self.save()
+        # print("nobles:", self.nobles)
+
         return noble
 
     def initialize(self):
@@ -60,7 +64,7 @@ class Board(models.Model):
                         cost=noble['cost'],
                     )
 
-        for i in range(5):
-            self.nobles.add(self.draw_noble())  # pylint:disable=E1101
-
+        for i in range(4):
+            self.draw_noble()  # pylint:disable=E1101
+        self.save()
         return self

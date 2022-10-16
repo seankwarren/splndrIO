@@ -1,6 +1,5 @@
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
-import TextField from '@mui/material/TextField';
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { useNavigate } from "react-router-dom";
 
@@ -21,39 +20,43 @@ const GameList: React.FC<propsType> = (props) => {
 
     // websocket connection and handling
     const { sendMessage, readyState, response } = useCustomWebSocket('ws://127.0.0.1:8000/games/')
-    const [serverStatus, setServerStatus] = useState('Closed')
     const connectionStatus = ConnectionStatus[readyState];
-    useEffect(() => {
-        setServerStatus(connectionStatus)
-    }, [connectionStatus])
 
 
     // manage game list state
-    const [gameList, setGameList] = useState([])
-    const [selectedGame, setSelectedGame] = useState<string | undefined>()
+    const [gameList, setGameList] = useState<GameType[] | undefined>([])
+    const [selectedGame, setSelectedGame] = useState<GameType | undefined>()
+    const [selectedGameURL, setSelectedGameURL] = useState<string | undefined>()
 
     // update game list whenever websocket sends new response
     useEffect(() => {
         const type = response?.type
         const message = JSON.stringify(response?.message)
-
+        // console.log(`updating based on last response of type: ${type}`)
         switch (type) {
             case 'request_game_list':
                 setGameList(JSON.parse(message))
+                // console.log(message)
                 break;
-            case 'create_new_game':
-                setSelectedGame(JSON.parse(message)["game_url"])
-                setGameList((gameList) => gameList.concat(JSON.parse(message)))
-                console.log("new game:", JSON.parse(message)["game_url"])
-                navigate("/games/" + JSON.parse(message)["game_url"])
+            case 'create_game':
+                setSelectedGame(JSON.parse(message))
+                setGameList((gameList) => gameList?.concat(JSON.parse(message)))
+                // console.log("HERE")
+                navigate("/games/" + JSON.parse(message)["game_url"] + "/" + JSON.parse(message).current_player[0].id)
+                //     { state: { player_id: JSON.parse(message).current_player[0].id } }
+                // )
                 break;
             case 'add_player':
-                navigate("/games/" + selectedGame)
+                // console.log("HERE")
+                // console.log(selectedGame)
+                navigate("/games/" + selectedGameURL + "/" + selectedGame?.current_player[0].id)
+                //     { state: { player_id: selectedGame?.current_player.id } }
+                // )
                 break;
             default:
                 console.log(`Unknown message type ${type}`)
         }
-    }, [response, setGameList, selectedGame, navigate])
+    }, [response, selectedGameURL])
 
 
     // Event Handlers
@@ -61,7 +64,8 @@ const GameList: React.FC<propsType> = (props) => {
     const [isShowCreate, setIsShowCreate] = useState<boolean>(false)
 
     const handleClickJoinGame = ((game_url: string) => {
-        setSelectedGame(game_url)
+        setSelectedGameURL(game_url)
+        setSelectedGame(gameList?.filter((game) => game.game_url === game_url)[0])
         setIsShowJoin(true)
         setIsShowCreate(false)
     });
@@ -81,12 +85,12 @@ const GameList: React.FC<propsType> = (props) => {
         // eslint-disable-next-line
     }, [])
 
-
     // JSX Elements
     const GamePapers = () => {
+
         return (
             <div>
-                {gameList.map((game: any) => (
+                {gameList?.map((game: any) => (
                     <Paper style={styles.Paper} key={game["game_url"]} elevation={3}>
                         <div style={styles.gameDetailContainer}>
                             <div>
@@ -146,17 +150,16 @@ const GameList: React.FC<propsType> = (props) => {
                     username: usernameRef.current.value,
                 },
             })
-            console.log(create_game_request)
             sendMessage(create_game_request)
         } else if (isShowJoin) {
             const add_player_request = JSON.stringify({
                 type: "add_player",
                 message: {
-                    "game_url": selectedGame,
+                    "game_url": selectedGameURL,
                     "username": usernameRef.current.value,
                 },
             })
-            console.log(add_player_request)
+
             sendMessage(add_player_request)
         }
         setIsShowJoin(false)
