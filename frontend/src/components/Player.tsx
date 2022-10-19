@@ -1,5 +1,6 @@
 import React from 'react'
 import { CARD_COLORS, getPlayerPoints, getPurchasingPower } from '../utils'
+import Card from './Card'
 import { PlayerType } from './types'
 
 interface propsType {
@@ -12,21 +13,25 @@ const Player: React.FC<propsType> = ({ player, key, className }) => {
 
     const { deckValue, gemValue } = getPurchasingPower(player)
 
-    const bank_str = deckValue?.map((deckValue, i) => {
+    const bank_elem = deckValue?.map((deckValue, i) => {
         return (
-            <>
+            <div key={i} className={`player-bank-gem`} >
                 <div className={`bank-gem-value ${CARD_COLORS[i + 1]?.string}`}>
                     {gemValue[i]}
                 </div>
                 <div className={`bank-deck-value ${CARD_COLORS[i + 1]?.string}`}>
                     {`+${deckValue}`}
                 </div>
-            </>
+            </div>
         )
     })
 
-    const bank_elem = bank_str?.map((str, i) => {
-        return <div key={i} className={`player-bank-gem`} >{str}</div>
+    const reserved_deck = player?.deck[0].cards.map((card) => {
+        return card.isReserved && (
+            <div className='player-card-container'>
+                <Card card={card} className="player-card" sendMessage={() => { }}></Card>
+            </div>
+        )
     })
 
     return (
@@ -38,10 +43,13 @@ const Player: React.FC<propsType> = ({ player, key, className }) => {
                 <div className='player-points'>
                     {getPlayerPoints(player)}
                 </div>
+                {/* {player?.turn} */}
             </div>
-
             <div className='player-bank'>
                 {bank_elem}
+            </div>
+            <div className='reserved-deck'>
+                {reserved_deck}
             </div>
 
         </div>

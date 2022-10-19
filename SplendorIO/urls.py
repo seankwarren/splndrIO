@@ -21,5 +21,5 @@ admin.autodiscover()
 urlpatterns = [
     path("api/", include("splendor.urls"), name="api"),
     path("admin/", admin.site.urls, name="admin"),
-    #path("", include("frontend.urls")),
+    # path("games/", include("frontend.urls")),
 ]

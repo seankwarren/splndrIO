@@ -178,15 +178,20 @@ class GameManager(models.Manager):  # pylint:disable=R0903
             player_bank.gems = toString(player_balance)
             player_bank.save()
 
+            Game.objects.end_turn(game.game_url)
+
         elif move["cardToReserve"]:
             print("reserving card")
             board = game.board.first()
             card = board.cards.get(pk=move["cardToReserve"])
+
             player_deck = player.deck.get()
             player_bank = player.bank.get()
             game_bank = game.bank.get()
 
             board.cards.remove(card)
+            card.isReserved = True
+            card.save()
             player_deck.cards.add(card)
 
             # TODO: extend player model to include a reserved deck

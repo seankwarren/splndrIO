@@ -4,6 +4,7 @@ export interface CardType {
     id: string;
     level: number;
     color: number;
+    isReserved: Boolean;
 }
 
 export interface NobleType {

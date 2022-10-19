@@ -289,6 +289,8 @@ const GlobalStyle = styled.createGlobalStyle`
     }
 
     .player {
+        position: relative;
+        z-index: 2000;
         display: grid;
         grid-auto-flow: column;
         margin-bottom: var(--big-padding);
@@ -304,6 +306,7 @@ const GlobalStyle = styled.createGlobalStyle`
             display: flex;
             font-size: var(--med-ft-sz);
             align-items: center;
+            justify-content: space-between;
             .player-points {
                 margin-right: var(--small-padding);
                 color: var(--white);
@@ -313,6 +316,7 @@ const GlobalStyle = styled.createGlobalStyle`
             }
         }
         .player-bank {
+            justify-self: center;
             display: flex;
             grid-row: 2;
             /* flex-direction: column; */
@@ -353,6 +357,34 @@ const GlobalStyle = styled.createGlobalStyle`
                     border-radius: 50%;
                 }
             }
+        }
+    }
+
+    .reserved-deck {
+        position: relative;
+        grid-row: 3;
+        display: grid;
+        direction: rtl;
+        grid-auto-flow: column;
+        justify-self: right;
+    }
+
+    .player-card-container:not(:first-child) {
+        position: relative;
+        margin-right: -70px;
+    }
+    .player-card-container:first-child {
+        position: relative;
+        margin-right: 0px;
+    }
+    .player-card {
+        direction: ltr;
+        transform: scale(0.6);
+        position: relative;
+        :hover {
+            z-index: 2001;
+            transition: 0.1s all;
+            transform: scale(0.9);
         }
     }
 
@@ -494,19 +526,24 @@ const GlobalStyle = styled.createGlobalStyle`
         filter: saturate(30%) brightness(30%);
     }
 
-    .board-card.white {
+    .board-card.white,
+    .player-card.white {
         background-color: var(--white);
     }
-    .board-card.blue {
+    .board-card.blue,
+    .player-card.blue {
         background-color: var(--faded-blue);
     }
-    .board-card.green {
+    .board-card.green,
+    .player-card.green {
         background-color: var(--faded-green);
     }
-    .board-card.red {
+    .board-card.red,
+    .player-card.red {
         background-color: var(--faded-red);
     }
-    .board-card.black {
+    .board-card.black,
+    .player-card.black {
         background-color: var(--faded-black);
         color: white;
     }
@@ -525,6 +562,7 @@ const GlobalStyle = styled.createGlobalStyle`
 
     .hover-zoom {
         :hover {
+            transition: 0.1s all;
             transform: scale(1.5);
             z-index: 100;
         }

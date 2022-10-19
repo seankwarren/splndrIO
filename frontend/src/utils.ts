@@ -61,7 +61,7 @@ export const getPurchasingPower = (player: PlayerType | undefined) => {
     if (!player) return {};
     let deckValue = [0, 0, 0, 0, 0, 0];
     for (const card of player?.deck[0].cards) {
-        deckValue[card.color - 1] += 1;
+        if (!card.isReserved) deckValue[card.color - 1] += 1;
     }
     const gemValue = parseGems(player.bank[0].gems); //.map((num) => parseInt(num))
 
