@@ -1,4 +1,5 @@
 import { ReadyState } from 'react-use-websocket';
+import { PlayerType } from './components/types';
 
 export const ConnectionStatus = {
     [ReadyState.CONNECTING]: 'Connecting',
@@ -46,6 +47,28 @@ export const parseGems = (str: string | undefined): number[] => {
     return str.split(',').map((x) => parseInt(x));
 };
 
+// Returns the total points of a player's deck"""
+export const getPlayerPoints = (player: PlayerType | undefined): number => {
+    if (!player) return 0;
+
+    const points = sum(player?.deck[0].cards.map((card) => card.points));
+
+    return points;
+};
+
+// Returns the combined purchasing power of a player's gems and deck
+export const getPurchasingPower = (player: PlayerType | undefined) => {
+    if (!player) return {};
+    let deckValue = [0, 0, 0, 0, 0, 0];
+    for (const card of player?.deck[0].cards) {
+        deckValue[card.color - 1] += 1;
+    }
+    const gemValue = parseGems(player.bank[0].gems); //.map((num) => parseInt(num))
+
+    return { deckValue, gemValue };
+};
+
+// Converts an int < 14 to its equivalent roman numeral
 export const romanize = (num: number | undefined) => {
     if (!num) return;
 
@@ -70,4 +93,16 @@ export const romanize = (num: number | undefined) => {
     }
 
     return str;
+};
+
+export const sum = (arr: number[]): number => {
+    return arr.reduce((partialSum, a) => partialSum + a, 0);
+};
+
+export const max = (arr: number[]): number => {
+    return arr.reduce((a, b) => Math.max(a, b), -Infinity);
+};
+
+export const all = (arr: number[]): boolean => {
+    return arr.reduce((a, b) => a && b > 0, true);
 };

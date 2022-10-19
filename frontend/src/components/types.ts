@@ -20,6 +20,7 @@ export interface BoardType {
 export interface DeckType {
     level: number;
     cards: CardType[];
+    id: string;
 }
 
 export interface BankType {

@@ -10,3 +10,11 @@ CARD_COLORS = {
     "red": 4,
     "black": 5,
 }
+
+
+def toString(arr):
+    return ''.join([str(num) + ',' for num in arr])[:-1]
+
+
+def toArray(str):
+    return [int(num_str)for num_str in str.split(',')]

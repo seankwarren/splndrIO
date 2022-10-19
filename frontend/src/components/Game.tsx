@@ -56,33 +56,15 @@ const Game: React.FC<propsType> = (props) => {
                 <h1 className="title">splndr.io</h1>
             </div>
             <div className="container">
-                <div>
-                    <div className="table-container">
-                        {
-                            // !showCardClicked ?
-                            <div>
-                                <Board game={gameData} sendMessage={sendMessage} />
+                <Board game={gameData} sendMessage={sendMessage}>
+                    <Bank bank={gameData?.bank[0]} player={gameData?.players.filter((player) => player.id === player_id)[0]} sendMessage={sendMessage}></Bank>
+                </Board>
 
-                                {/* <CardModal container={document.getElementById(".table-container") as HTMLElement} /> */}
-                            </div>
-                            // <div>
-                            //     <button onClick={() => setShowCardClicked(false)}>Buy</button>
-                            //     <button onClick={() => setShowCardClicked(false)}>Reserve</button>
-                            // </div>
-                        }
-                    </div>
+                {/* <Player player={gameData?.current_player[0] as PlayerType} /> */}
 
-                    <Bank bank={gameData?.bank[0]}></Bank>
-
-                    <div>CurrentPlayer:
-                        <Player player={gameData?.current_player[0] as PlayerType} />
-                    </div>
-
-                    {/* <div>{gameData?.players?.map((player: PlayerType, i) => {
-                        return <Player key={i} player={player} />
-                    })}</div> */}
-
-                </div>
+                <div className="player-list">{gameData?.players?.map((player: PlayerType, i) => {
+                    return <Player key={i} player={player} className={`${(player.id === gameData?.current_player[0].id) && "current-turn"}`} />
+                })}</div>
             </div>
         </>
     )

@@ -34,8 +34,10 @@ class Board(models.Model):
         """Selects a noble and adds it to the board"""
         nobles = Noble.objects.all()  # pylint:disable=E1101
         noble = nobles.order_by('?').first()  # draw a card
-        self.nobles.add(noble)  # pylint:disable=E1101
-        self.save()
+        drawn_nobles = self.nobles.all()  # pylint:disable=E1101
+        while noble.id in [drawn_noble.id for drawn_noble in drawn_nobles]:
+            print("DUPLICATE DRAW:", noble.id)
+            noble = nobles.order_by('?').first()
         # print("nobles:", self.nobles)
 
         return noble
@@ -65,6 +67,8 @@ class Board(models.Model):
                     )
 
         for i in range(4):
-            self.draw_noble()  # pylint:disable=E1101
-        self.save()
+            self.nobles.add(self.draw_noble())  # pylint:disable=E1101
+            self.save()
+            # print(self.nobles)
+        # self.save()
         return self

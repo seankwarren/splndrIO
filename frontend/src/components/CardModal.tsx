@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Portal, Button } from "@mui/material";
 import { MoveType, CardType } from './types'
 import { useParams } from 'react-router-dom'
-import { CARD_COLORS, parseGems, romanize } from "../utils";
+import Card from "./Card";
 
 
 interface propsType {
@@ -10,78 +10,64 @@ interface propsType {
     container: HTMLElement | null,
     sendMessage: Function,
     card: CardType,
-    setShowCardClicked: Function,
+    setShow: Function,
 }
 
-export const CardModal: React.FC<propsType> = ({ className, container, sendMessage, card, setShowCardClicked }) => {
+export const CardModal: React.FC<propsType> = ({ className, container, sendMessage, card, setShow }) => {
     const { game_url, player_id } = useParams();
 
-    const handleBuyClick: React.MouseEventHandler<HTMLAnchorElement> = () => {
-        const move: MoveType = {
+    const blankMove = {
+        gemsToDraw: "",
+        cardToPurchase: "",
+        cardToReserve: "",
+    }
+
+
+    //
+    const handleBuyClick: React.MouseEventHandler<HTMLAnchorElement> = (e) => {
+        const move = {
             gemsToDraw: "",
             cardToPurchase: card.id,
             cardToReserve: "",
-        }
+        } as MoveType
 
-        console.log(card.cost)
-
-        const request = {
-            type: "player_move",
-            message: {
-                "game_url": game_url,
-                "player": player_id,
-                move,
-            },
-        }
-        sendMessage(JSON.stringify(request))
-        setShowCardClicked(false)
+        sendMove(move)
+        setShow(false)
     }
 
     const handleReserveClick: React.MouseEventHandler<HTMLAnchorElement> = () => {
-        const move: MoveType = {
+        const move = {
             gemsToDraw: "",
             cardToPurchase: "",
             cardToReserve: card.id,
-        }
+        } as MoveType
+        sendMove(move)
+        setShow(false)
+    }
 
+    const sendMove = (move: MoveType) => {
         const request = {
             type: "player_move",
             message: {
                 "game_url": game_url,
                 "player": player_id,
-                move,
+                "move": move,
             },
         }
         sendMessage(JSON.stringify(request))
-        setShowCardClicked(false)
     }
+
     return (
         <Portal container={document.querySelector(".board")}>
-            <div className='card-buy-reserve'>
+            <div className='game-modal modal'>
+
                 <div>
                     <Button href="" variant="contained" size="large" onClick={handleBuyClick}>Buy</Button>
                     <Button href="" variant="contained" size="large" onClick={handleReserveClick}>Reserve</Button>
                 </div>
-                {/* <div style={{ flexBasis: "100%", height: 0 }}></div> */}
-                <div key={card.id} id={card.id} className={`card ${className} ${CARD_COLORS[card.color].string}`}>
-                    <div className="card-cost">
-                        {parseGems(card.cost.slice(0, 9))
-                            .map((cost, i) => {
-                                const color = CARD_COLORS[i + 1]?.string
-                                return (
-                                    cost > 0 && (
-                                        <div className={`${color}`} key={i}>
-                                            {cost}
-                                        </div>
-                                    )
-                                )
-                            })
-                        }
-                    </div>
-                    <div className="card-points">
-                        {(card.points > 0) ? romanize(card.points) : " "}
-                    </div>
-                </div >
+
+                <Card className="board-card zoomed" sendMessage={sendMessage} card={card} />
+
             </div>
         </Portal>
     )

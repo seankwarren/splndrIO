@@ -6,12 +6,12 @@ import Deck from './Deck'
 import { GameType } from './types'
 
 interface propsType {
-    key?: number,
     game?: GameType,
     sendMessage: Function,
+    children?: React.ReactNode;
 }
 
-const Board: React.FC<propsType> = ({ key, game, sendMessage }) => {
+const Board: React.FC<propsType> = ({ game, sendMessage, children }) => {
 
     return (
         <div className="board" >
@@ -37,16 +37,18 @@ const Board: React.FC<propsType> = ({ key, game, sendMessage }) => {
                     }
                     return (
                         <Card
-                            className={`board-card ${level}`}
+                            key={card.id}
+                            className={`board-card hover-zoom ${level}`}
                             card={card}
                             sendMessage={sendMessage} />
                     )
                 })}
 
                 {game?.board[0]?.nobles.map((noble, i) => {
-                    return <Noble className="board-noble" key={i} noble={noble}></Noble>
+                    return <Noble className={`hover-zoom`} key={i} noble={noble} sendMessage={sendMessage}></Noble>
                 })}
             </div>
+            {children}
         </div>
     )
 }
